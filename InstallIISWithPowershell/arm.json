@@ -6,7 +6,7 @@
         "adminUserName": "azureuser",
         "adminPassword": "LA!2018!Lab",
         "vmSize": "Standard_B1ms",
-        "vmName": "vm",
+        "vmName": "lab-VM",
         "osVersion": "2016-Datacenter",
         "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
         "location": "[resourceGroup().location]",
@@ -15,12 +15,11 @@
         "addressPrefix": "10.0.0.0/16",
         "subnet1Name": "default",
         "subnet1Prefix": "10.0.0.0/24",
-        "nicName": "vm-NIC",
-        "publicIPAddressName": "vm-PIP",
+        "nicName": "lab-VM-NIC",
+        "publicIPAddressName": "lab-VM-PIP",
         "publicIPAddressType": "Dynamic",
-        "virtualNetworkName": "vm-VNET",
-        "networkSecurityGroupName": "vm-NSG",
-        "sshKeyPath": "[concat('/home/', variables('adminUsername'),'/.ssh/authorized_keys')]",
+        "virtualNetworkName": "lab-VM-VNET",
+        "networkSecurityGroupName": "lab-VM-NSG",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
         "storageAccountName": "[toLower( concat( 'linuxazlab', uniqueString(resourceGroup().id) ))]"    
@@ -45,12 +44,12 @@
             "properties": {
                 "securityRules": [
                     {
-                        "name": "ssh_rule",
+                        "name": "RDP_rule",
                         "properties": {
-                            "description": "Locks inbound down to ssh default port 22.",
+                            "description": "Allows RDP access",
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
-                            "destinationPortRange": "22",
+                            "destinationPortRange": "3389",
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
@@ -165,9 +164,5 @@
         }
     ],
     "outputs": {
-        "sshCommand": {
-            "type": "string",
-            "value": "[concat('ssh ', variables('adminUsername'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
-        }
     }
 }

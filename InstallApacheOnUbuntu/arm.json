@@ -4,10 +4,10 @@
     "parameters": {},
     "variables": {
         "adminUserName": "azureuser",
-        "sshKeyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCr8ptS8fdVQ0i7ye8WHF9bVK9gPPamK/YMO2aDBTzYaloKhEjSGHyjjNF6zUPTxFvtK7KxldUOb2JcUiWQBVPTrOKaNX22ox1LL/TA3gJR6jafSaeijRMVb7M6TNxfLL2/djuI40Du+kNFSYwFMW9fgjs1oYb4LP9KukJ0psom/txdUB/G8dFSwblaiWTPdSvYdCRb/JblScR0IgUC5pj8+ARiJBqaBwYV6WK8TEC+GUzIzi/8BTz5yfchrEmGyQ5+TR6iXu3kpbfY4i5BdoncNkQkamxHTilRRf3SfQj+bDmeVuEzRWSHvJTtCs70AyP4rziK0fgqUeXf8CCXZE5b",
+        "sshKeyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHT83TtJytY5tznaF8AsQAwFzN5nY5HVGxtlmBR083FEf+1g3rVENCvsV0i+3dVHExw+IbaMExCbqCSjcnM3PfCG23id5HRw7L2kROXXbEjcZe8LzEj7DPZ4ZWnQ1iVHenlO0YqBtPEb5BNhhmFHyylGewKt2Q7wkUZWTZfiCYT+a2Is5z4KjA2xxXs/A4pox8yrjmJb787T5RrLz422RsdUqVXHPhvwo8DrlC0mBEPax0Z1Ou8yKR/upW1uq1yJwadEox0aNtOm1zOyrhNaA1QzAMXeFrq2x91yJOFfD6LoKS7/oHEc9uslVBpTgNbN9J/PvQXhCIRntOsLngsPnF ",
         "vmSize": "Standard_B1ms",
-        "vmName": "vm",
-        "ubuntuOSVersion": "18.04-LTS",
+        "vmName": "lab-VM",
+        "ubuntuOSVersion": "16.04-LTS",
         "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
         "location": "[resourceGroup().location]",
         "imagePublisher": "Canonical",
@@ -15,16 +15,28 @@
         "addressPrefix": "10.0.0.0/16",
         "subnet1Name": "default",
         "subnet1Prefix": "10.0.0.0/24",
-        "nicName": "vm-NIC",
-        "publicIPAddressName": "vm-PIP",
+        "nicName": "lab-VM-NIC",
+        "publicIPAddressName": "lab-VM-PIP",
         "publicIPAddressType": "Dynamic",
-        "virtualNetworkName": "vm-VNET",
-        "networkSecurityGroupName": "vm-NSG",
+        "virtualNetworkName": "lab-VM-VNET",
+        "networkSecurityGroupName": "lab-VM-NSG",
         "sshKeyPath": "[concat('/home/', variables('adminUsername'),'/.ssh/authorized_keys')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
-        "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]"
+        "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
+        "storageAccountName": "[toLower( concat( 'linuxazlab', uniqueString(resourceGroup().id) ))]"
     },
     "resources": [
+        {
+          "type": "Microsoft.Storage/storageAccounts",
+          "name": "[variables('storageAccountName')]",
+          "apiVersion": "2018-02-01",
+          "location": "[resourceGroup().location]",
+          "sku": {
+            "name": "Standard_LRS"
+          },
+          "kind": "Storage",
+          "properties": {}
+        },
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -163,9 +175,5 @@
         }
     ],
     "outputs": {
-        "sshCommand": {
-            "type": "string",
-            "value": "[concat('ssh ', variables('adminUsername'), '@', variables('uniqueDnsLabelPrefix'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
-        }
     }
 }
