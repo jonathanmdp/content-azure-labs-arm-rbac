@@ -1,0 +1,150 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  },
+  "variables": {
+    "adminUsername": { "type": "string", "defaultValue": "labuser" },
+    "adminPassword": { "type": "securestring", "defaultValue": "Lab!2018!User" },
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks','lab-VNET')]", 
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/default')]" 
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-02-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "lab-NSG",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "rdp_rule",
+            "properties": {
+              "description": "Allow RDP",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "web_rule",
+            "properties": {
+              "description": "Allow WEB",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "sku": {
+            "name": "Basic",
+            "tier": "Regional"
+        },
+        "name": "vsnetIP",
+        "apiVersion": "2018-02-01",
+        "location": "[resourceGroup().location]",
+        "properties": {
+            "publicIPAddressVersion": "IPv4",
+            "publicIPAllocationMethod": "Dynamic",
+            "idleTimeoutInMinutes": 4
+        },
+        "dependsOn": []
+    },
+   {
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "lab-VNET",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', 'lab-NSG')]"
+      ],      
+      "properties": {
+        "addressSpace": { "addressPrefixes": [ "10.0.0.0/16" ] },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": { "addressPrefix": "10.0.0.0/24" },
+            "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'lab-NSG')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2016-03-30",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "lab-vsnet-NIC",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/', 'lab-VNET')]",
+        "[resourceId('Microsoft.Network/publicIPAddresses/', 'lab-PIP')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress":{
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'lab-PIP')]"
+              },
+              "subnet": { "id": "[variables('subnetRef')]" }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2016-04-30-preview",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "myVM",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces/', 'lab-vsnet-NIC')]"
+      ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "Standard_DS1" },
+        "osProfile": {
+          "computerName": "myVM",
+          "adminUsername": "[variables('adminUsername')]",
+          "adminPassword": "[variables('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+                        "publisher": "MicrosoftVisualStudio",
+                        "offer": "VisualStudio",
+                        "sku": "VS-2017-Comm-WS2016",
+                        "version": "latest"
+          },
+          "osDisk": {
+            "name": "lab-vsnet-MD",
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces','lab-vsnet-NIC')]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
