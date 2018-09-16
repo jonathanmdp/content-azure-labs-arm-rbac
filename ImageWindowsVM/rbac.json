@@ -1,7 +1,7 @@
 {
-    "name": "Creating_an_Image_of_a_Linux_VM_in_Azure",
+    "name": "Install_IIS_on_Windows_Server_2016",
     "properties": {
-        "roleName": "Creating_an_Image_of_a_Linux_VM_in_Azure",
+        "roleName": "Install_IIS_on_Windows_Server_2016",
         "description": "New Restricted User Environment",
         "type": "CustomRole",
         "permissions": [
@@ -12,13 +12,15 @@
                     "Microsoft.Network/networkInterfaces/*",
                     "Microsoft.Network/networkSecurityGroups/*",
                     "Microsoft.Resources/subscriptions/resourceGroups/*",
+                    "Microsoft.Resources/subscriptions/resourcegroups/read",
                     "Microsoft.ResourceHealth/availabilityStatuses/read",
                     "Microsoft.Storage/storageAccounts/*",
                     "Microsoft.Network/virtualNetworks/*",
                     "Microsoft.Network/networkSecurityGroups/*",
                     "microsoft.resources/deployments/validate/action",
                     "Microsoft.Network/publicIpAddresses/*",
-                    "Microsoft.Resources/deployments/*"
+                    "Microsoft.Resources/deployments/*",
+                    "Microsoft.Compute/disks/*"
                 ],
                 "notActions": []
             }
