@@ -200,7 +200,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/linuxacademy/content-azure-labs/master/ImageLinuxVM/script.sh"
+                        "https://raw.githubusercontent.com/linuxacademy/content-azure-labs-arm-rbac/master/ImageLinuxVM/script.sh"
                     ]
                 },
                 "publisher": "Microsoft.OSTCExtensions",

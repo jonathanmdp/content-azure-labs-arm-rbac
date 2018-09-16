@@ -152,7 +152,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://raw.githubusercontent.com/linuxacademy/content-azure-labs/master/ImageWindowsVM/script.ps1"
+                        "https://raw.githubusercontent.com/linuxacademy/content-azure-labs-arm-rbac/master/ImageWindowsVM/script.ps1"
                     ]
                 },
                 "publisher": "Microsoft.Compute",

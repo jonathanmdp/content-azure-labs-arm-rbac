@@ -1,0 +1,48 @@
+{
+    "name": "Creating_an_Image_of_a_Linux_VM_in_Azure",
+    "properties": {
+        "roleName": "Creating_an_Image_of_a_Linux_VM_in_Azure",
+        "description": "New Restricted User Environment",
+        "type": "CustomRole",
+        "permissions": [
+            {
+                "actions": [
+                    "Microsoft.Authorization/*/read",
+                    "Microsoft.Compute/virtualMachines/*",
+                    "Microsoft.Network/networkInterfaces/*",
+                    "Microsoft.Network/networkSecurityGroups/*",
+                    "Microsoft.Resources/subscriptions/resourceGroups/*",
+                    "Microsoft.ResourceHealth/availabilityStatuses/read",
+                    "Microsoft.Storage/storageAccounts/*",
+                    "Microsoft.Network/virtualNetworks/*",
+                    "Microsoft.Network/networkSecurityGroups/*",
+                    "microsoft.resources/deployments/validate/action",
+                    "Microsoft.Network/publicIpAddresses/*",
+                    "Microsoft.Resources/deployments/*",
+                    "Microsoft.Compute/images/*"
+                ],
+                "notActions": []
+            }
+        ],
+        "assignableScopes": [
+            "/subscriptions/e0b45aec-8dd5-4d62-8ae3-295d986846cf",
+            "/subscriptions/9c16fcc0-47fc-4e28-9091-2ed3e9039f4d",
+            "/subscriptions/2736d6fb-55dc-47a3-959a-54ca4b55ef7e",
+            "/subscriptions/1983f9e7-91a6-486b-9e72-f55a8ff94c64",
+            "/subscriptions/84f32ccd-2091-43e1-b160-f25630a583e9",
+            "/subscriptions/3ef78b85-400a-4a1b-8766-669c0ecb85f6",
+            "/subscriptions/9b681955-874f-4652-945d-141b857a13cd",
+            "/subscriptions/54a26b42-88f0-4db0-9ef3-350849207fb4",
+            "/subscriptions/c4071dcf-8254-49c6-8a97-6317205d2174",
+            "/subscriptions/a63eac7c-8f2e-4cf0-890e-00d64df936e4",
+            "/subscriptions/28a6b684-8a09-4a70-abd5-dcddeb9abd37",
+            "/subscriptions/ecd83f0f-fc0d-41e1-bfe2-5fc7953f4636",
+            "/subscriptions/f50598ae-4099-40ca-a5d9-7d6464178ac3",
+            "/subscriptions/e8d3fcd3-3e81-4381-a27d-9b7fc9773e3e",
+            "/subscriptions/e4b91030-ee1d-48b0-8f87-a28197d08b97",
+            "/subscriptions/c2c84aa8-742c-4776-aa36-e76ffafe02b6",
+            "/subscriptions/5d34f9ca-0bf1-4900-8aa2-6d23834cbf6f",
+            "/subscriptions/69cdd459-4f97-49b2-82f0-0a92188fc018"
+        ]
+    }
+}
