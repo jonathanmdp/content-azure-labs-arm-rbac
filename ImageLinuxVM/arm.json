@@ -143,6 +143,30 @@
                 ]
             }
         },
+                {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('vmName'), '/config-script')]",
+            "apiVersion": "2017-12-01",
+            "location": "[resourceGroup().location]",
+            "scale": null,
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [
+                        "https://raw.githubusercontent.com/linuxacademy/content-azure-labs-arm-rbac/master/ImageLinuxVM/script.sh"
+                    ]
+                },
+                "publisher": "Microsoft.OSTCExtensions",
+                "type": "CustomScriptForLinux",
+                "typeHandlerVersion": "1.4",
+                "protectedSettings": {
+                    "commandToExecute": "sh script.sh"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
+            ]
+        },
         {
             "apiVersion": "2016-04-30-preview",
             "type": "Microsoft.Compute/virtualMachines",
@@ -189,31 +213,7 @@
                     ]
                 }
             }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmName'), '/config-script')]",
-            "apiVersion": "2017-12-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "fileUris": [
-                        "https://raw.githubusercontent.com/linuxacademy/content-azure-labs-arm-rbac/master/ImageLinuxVM/script.sh"
-                    ]
-                },
-                "publisher": "Microsoft.OSTCExtensions",
-                "type": "CustomScriptForLinux",
-                "typeHandlerVersion": "1.4",
-                "protectedSettings": {
-                    "commandToExecute": "sh script.sh"
-                }
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
-            ]
-        },
+        }
     ],
     "outputs": {}
 }
