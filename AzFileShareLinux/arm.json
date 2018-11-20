@@ -4,25 +4,26 @@
     "parameters": {},
     "variables": {
         "adminUserName": "azureuser",
-        "adminPassword": "LA!2018!Lab",
+        "sshKeyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHT83TtJytY5tznaF8AsQAwFzN5nY5HVGxtlmBR083FEf+1g3rVENCvsV0i+3dVHExw+IbaMExCbqCSjcnM3PfCG23id5HRw7L2kROXXbEjcZe8LzEj7DPZ4ZWnQ1iVHenlO0YqBtPEb5BNhhmFHyylGewKt2Q7wkUZWTZfiCYT+a2Is5z4KjA2xxXs/A4pox8yrjmJb787T5RrLz422RsdUqVXHPhvwo8DrlC0mBEPax0Z1Ou8yKR/upW1uq1yJwadEox0aNtOm1zOyrhNaA1QzAMXeFrq2x91yJOFfD6LoKS7/oHEc9uslVBpTgNbN9J/PvQXhCIRntOsLngsPnF ",
         "vmSize": "Standard_B1ms",
         "vmName": "lab-VM",
-        "osVersion": "2016-Datacenter",
+        "ubuntuOSVersion": "16.04-LTS",
         "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
         "location": "[resourceGroup().location]",
-        "imagePublisher": "MicrosoftWindowsServer",
-        "imageOffer": "WindowsServer",
+        "imagePublisher": "Canonical",
+        "imageOffer": "UbuntuServer",
         "addressPrefix": "10.0.0.0/16",
         "subnet1Name": "default",
         "subnet1Prefix": "10.0.0.0/24",
-        "nicName": "lab-VM-NIC",
-        "publicIPAddressName": "lab-VM-PIP",
+        "nicName": "lab-NIC",
+        "publicIPAddressName": "lab-PIP",
         "publicIPAddressType": "Dynamic",
-        "virtualNetworkName": "lab-VM-VNET",
-        "networkSecurityGroupName": "lab-VM-NSG",
+        "virtualNetworkName": "lab-VNET",
+        "networkSecurityGroupName": "lab-NSG",
+        "sshKeyPath": "[concat('/home/', variables('adminUsername'),'/.ssh/authorized_keys')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
-        "storageAccountName": "[toLower( concat( 'azureazlab', uniqueString(resourceGroup().id) ))]"    
+        "storageAccountName": "[toLower( concat( 'linuxazlab', uniqueString(resourceGroup().id) ))]"
     },
     "resources": [
         {
@@ -36,7 +37,6 @@
             "kind": "Storage",
             "properties": {}
         },
- 
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -45,12 +45,12 @@
             "properties": {
                 "securityRules": [
                     {
-                        "name": "RDP_rule",
+                        "name": "ssh_rule",
                         "properties": {
-                            "description": "Allows RDP access",
+                            "description": "Locks inbound down to ssh default port 22.",
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
-                            "destinationPortRange": "3389",
+                            "destinationPortRange": "22",
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
@@ -58,25 +58,26 @@
                             "direction": "Inbound"
                         }
                     },
-
                     {
-                        "name": "HTTP_rule",
+                        "name": "web_rule",
                         "properties": {
-                            "description": "Allows HTTP access",
-                            "protocol": "Tcp",
+                            "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "80",
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 124,
-                            "direction": "Inbound"
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
                         }
                     }
                 ]
             }
         },
-
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -89,7 +90,6 @@
                 }
             }
         },
-
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/virtualNetworks",
@@ -117,7 +117,6 @@
                 ]
             }
         },
-
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/networkInterfaces",
@@ -144,32 +143,6 @@
                 ]
             }
         },
-
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmName'), '/config-script')]",
-            "apiVersion": "2017-12-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "fileUris": [
-                        "https://raw.githubusercontent.com/linuxacademy/content-azure-labs-arm-rbac/master/ImageWindowsVM/script.ps1"
-                    ]
-                },
-                "publisher": "Microsoft.Compute",
-                "type": "CustomScriptExtension",
-                "typeHandlerVersion": "1.9",
-                "protectedSettings": {
-                    "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File script.ps1"
-                }
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
-            ]
-        },
-        
         {
             "apiVersion": "2016-04-30-preview",
             "type": "Microsoft.Compute/virtualMachines",
@@ -185,13 +158,23 @@
                 "osProfile": {
                     "computerName": "[variables('vmName')]",
                     "adminUsername": "[variables('adminUsername')]",
-                    "adminPassword": "[variables('adminPassword')]"
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[variables('sshKeyPath')]",
+                                    "keyData": "[variables('sshKeyData')]"
+                                }
+                            ]
+                        }
+                    }
                 },
                 "storageProfile": {
                     "imageReference": {
                         "publisher": "[variables('imagePublisher')]",
                         "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('osVersion')]",
+                        "sku": "[variables('ubuntuOSVersion')]",
                         "version": "latest"
                     },
                     "osDisk": {
@@ -208,6 +191,5 @@
             }
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }

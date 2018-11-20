@@ -1,7 +1,7 @@
 {
-    "name": "Creating_a_Linux_VM_PS_ARM",
+    "name": "MSH___Creating_a_Windows_based_Web_App_Service",
     "properties": {
-        "roleName": "Creating_a_Linux_VM_PS_ARM",
+        "roleName": "MSH___Creating_a_Windows_based_Web_App_Service",
         "description": "New Restricted User Environment",
         "type": "CustomRole",
         "permissions": [
@@ -19,7 +19,13 @@
                     "Microsoft.Network/networkSecurityGroups/*",
                     "microsoft.resources/deployments/validate/action",
                     "Microsoft.Network/publicIpAddresses/*",
-                    "Microsoft.Resources/deployments/*"
+                    "Microsoft.Resources/deployments/*",
+                    "Microsoft.Web/sites/*",
+                    "Microsoft.Web/sites/read",
+                    "Microsoft.Web/sites/write",
+                    "Microsoft.Web/serverfarms/*",
+                    "Microsoft.Web/serverfarms/read",
+                    "Microsoft.Web/serverfarms/write"
                 ],
                 "notActions": []
             }

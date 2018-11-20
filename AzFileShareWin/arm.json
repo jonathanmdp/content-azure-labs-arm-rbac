@@ -15,15 +15,16 @@
         "addressPrefix": "10.0.0.0/16",
         "subnet1Name": "default",
         "subnet1Prefix": "10.0.0.0/24",
-        "nicName": "lab-VM-NIC",
-        "publicIPAddressName": "lab-VM-PIP",
+        "nicName": "lab-NIC",
+        "publicIPAddressName": "lab-PIP",
         "publicIPAddressType": "Dynamic",
-        "virtualNetworkName": "lab-VM-VNET",
-        "networkSecurityGroupName": "lab-VM-NSG",
+        "virtualNetworkName": "lab-VNET",
+        "networkSecurityGroupName": "lab-NSG",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
         "subnet1Ref": "[concat(variables('vnetID'),'/subnets/',variables('subnet1Name'))]",
         "storageAccountName": "[toLower( concat( 'azureazlab', uniqueString(resourceGroup().id) ))]"    
     },
+    
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
@@ -208,6 +209,7 @@
             }
         }
     ],
+
     "outputs": {
     }
 }
