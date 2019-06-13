@@ -1,7 +1,7 @@
 {
-    "name": "Creating_a_Linux_VM_PS_ARM",
+    "name": "Install_IIS_on_Windows_Server_2016",
     "properties": {
-        "roleName": "Creating_a_Linux_VM_PS_ARM",
+        "roleName": "Install_IIS_on_Windows_Server_2016",
         "description": "New Restricted User Environment",
         "type": "CustomRole",
         "permissions": [
@@ -19,7 +19,8 @@
                     "Microsoft.Network/networkSecurityGroups/*",
                     "microsoft.resources/deployments/validate/action",
                     "Microsoft.Network/publicIpAddresses/*",
-                    "Microsoft.Resources/deployments/*"
+                    "Microsoft.Resources/deployments/*",
+                    "Microsoft.Compute/disks/*"
                 ],
                 "notActions": []
             }

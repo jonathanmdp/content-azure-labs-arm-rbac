@@ -1,7 +1,7 @@
 {
-    "name": "Creating_a_Linux_VM_PS_ARM",
+    "name": "Azure_Lab_File_Share_Linux",
     "properties": {
-        "roleName": "Creating_a_Linux_VM_PS_ARM",
+        "roleName": "Azure_Lab_File_Share_Linux",
         "description": "New Restricted User Environment",
         "type": "CustomRole",
         "permissions": [

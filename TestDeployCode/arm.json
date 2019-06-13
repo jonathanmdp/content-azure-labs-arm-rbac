@@ -16,7 +16,15 @@
         "wasName": "[toLower( concat( 'laazlabwas', uniqueString(resourceGroup().id) ))]",
         "hostName": "[concat(variables('wasName'), '.azurewebsites.net')]",
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks','lab-VNET')]",
-        "subnetRef": "[concat(variables('vnetID'),'/subnets/default')]"
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/default')]",
+        "zipFileName": "AnsibleCreateVM",
+        "fileUris": {
+            "type": "array",
+            "defaultValue": [
+                "https://raw.githubusercontent.com/linuxacademy/content-azure-labs/master/zips/get-content.ps1"
+            ]
+        },
+        "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File get-contentps1 -content_package_name ', variables('zipFileName'))]"
     },
     "resources": [
         {
@@ -45,7 +53,6 @@
             },
             "dependsOn": []
         },
-        
         {
             "type": "Microsoft.Web/sites",
             "kind": "app",
@@ -204,7 +211,6 @@
                 "[resourceId('Microsoft.Web/sites', variables('wasName'))]"
             ]
         },
-
         {
             "type": "Microsoft.Web/sites/hostNameBindings",
             "name": "[concat(variables('wasName'), '/', variables('hostName'))]",
@@ -220,7 +226,6 @@
                 "[resourceId('Microsoft.Web/sites', variables('wasName'))]"
             ]
         },
-
         {
             "apiVersion": "2018-02-01",
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -245,7 +250,6 @@
                 ]
             }
         },
-
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "sku": {
@@ -262,7 +266,6 @@
             },
             "dependsOn": []
         },
-
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/virtualNetworks",
@@ -290,7 +293,6 @@
                 ]
             }
         },
-
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Network/networkInterfaces",
@@ -317,7 +319,6 @@
                 ]
             }
         },
-
         {
             "apiVersion": "2016-04-30-preview",
             "type": "Microsoft.Compute/virtualMachines",
@@ -355,7 +356,28 @@
                         }
                     ]
                 }
-            }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "download-code",
+                    "apiVersion": "2017-03-30",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[variables('vmName')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.9",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": "[variables('fileUris')]",
+                            "commandToExecute": "[variables('commandToExecute')]"
+                        }
+                    }
+                }
+            ],
         }
     ]
 }
